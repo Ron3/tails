@@ -40,11 +40,14 @@ class Glove(object):
         >>> class A(): pass
         >>> Glove(A()).size
         72
+        >>> Glove(None).size
+        72
 
         :return:
         """
-
-        if self.isConstant(self.orginObj):
+        if self.orginObj is None:
+            self.sortofnone()
+        elif self.isConstant(self.orginObj):
             # const
             self.sortofconst()
         elif isinstance(self.orginObj, list):
@@ -161,13 +164,13 @@ class Glove(object):
         return isinstance(value, (type(1), type(1.), basestring))
 
 
-    def getSizeOfConstant(self, value):
-        """
-        get size of a list, recusively.
-        :param value:
-        :return:
-        """
-        return
+    # def getSizeOfConstant(self, value):
+    #     """
+    #     get size of a list, recusively.
+    #     :param value:
+    #     :return:
+    #     """
+    #     return
 
 
 
@@ -178,9 +181,11 @@ class Glove(object):
         :return:
         """
         size = 0
-        if self.isConstant(value):
+        if value is None:
+            size += sys.getsizeof(None)
+        elif self.isConstant(value):
             # 常量
-            size += self._addTotalSize(sys.getsizeof(value))
+            size += sys.getsizeof(value)
         elif isinstance(value, list):
             size += self.getSizeOfList(value, obj)
         elif isinstance(value, dict):
@@ -212,7 +217,7 @@ class Glove(object):
             size += self._getSizeOfAny(e)
 
         if obj:
-            self.collectObj(obj, sys.getsizeof(list) + s)
+            self.collectObj(obj, sys.getsizeof(list) + size)
             return 0
         else:
             return size
@@ -253,9 +258,9 @@ class Glove(object):
         self.collectObj(obj, size)
 
         for k,v in obj.__dict__.iteritems():
-            self._getSizeOfAny(k, obj)
-            self._getSizeOfAny(v, obj)
-
+            size += self._getSizeOfAny(k, obj)
+            size += self._getSizeOfAny(v, obj)
+        return size
 
     def sortofobj(self):
         """
@@ -263,7 +268,12 @@ class Glove(object):
         """
         # count size of obj.
         self._addTotalSize(sys.getsizeof(self.orginObj))
-        self.getSizeOfObj(self.orginObj)
+        size = 0
+        for k,v in self.orginObj.__dict__.iteritems():
+            size += self._getSizeOfAny(k)
+            size += self._getSizeOfAny(v)
+
+        self._addTotalSize(size)
 
 
     def isCountObj(self, obj):
@@ -301,6 +311,13 @@ class Glove(object):
 
         self._addTotalSize(size)
 
+
+    def sortofnone(self):
+        """
+
+        :return:
+        """
+        self._addTotalSize(sys.getsizeof(None))
 
 
 if __name__ == "__main__":

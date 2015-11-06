@@ -5,7 +5,7 @@ __author__ = 'lamter'
 import sys
 import logging
 import unittest
-
+from glove import Glove
 
 def suite():
     testSuite1 = unittest.makeSuite(GloveTest, "test")
@@ -15,7 +15,6 @@ def suite():
 
 class GloveTest(unittest.TestCase):
     '''
-    测试武将相关
     '''
     def setUp(self):
         pass
@@ -28,4 +27,28 @@ class GloveTest(unittest.TestCase):
         :return:
         """
         value = 1
-        init
+
+
+
+    def test_pythonObj(self):
+        """
+        :return:
+        """
+        class A():
+            def __init__(self):
+                self.b1 = B()
+                self.b2 = B()
+                self.list = [1000, 23424.2, 'asdf0', u'unicode编码', self.b1]
+                self.dic = {
+                    132323423412312311: 'utf8编码',
+                    '232': self.b2,
+                    self.b2: self.b2,
+                    u'unicode编码': None,
+                }
+
+
+        class B(): pass
+
+        glove = Glove(A())
+        print glove.size
+
