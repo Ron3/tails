@@ -30,13 +30,24 @@ class Glove(object):
     def sort(self):
         """
         sort of constant and obj by type.
+
+        >>> Glove(1).size
+        24
+        >>> Glove([]).size
+        72
+        >>> Glove({}).size
+        280
+        >>> class A(): pass
+        >>> Glove(A()).size
+        72
+
         :return:
         """
 
         if self.isConstant(self.orginObj):
             # const
             self.sortofconst()
-        if isinstance(self.orginObj, list):
+        elif isinstance(self.orginObj, list):
             # list
             self.sortoflist()
         elif isinstance(self.orginObj, dict):
@@ -68,13 +79,14 @@ class Glove(object):
     def sortoflist(self):
         """
         oringiObj is a list.
-
         :return:
         """
         size = self.getSizeOfList(self.orginObj)
 
-        self._addTotalSize(size)
+        # size of list itself.
+        size += sys.getsizeof([])
 
+        self._addTotalSize(size)
 
 
     def _addTotalSize(self, size):
@@ -131,8 +143,17 @@ class Glove(object):
         return '%sTB\t%sGB\t%sMB\t%sKB\t%sbyte' % (tb, gb, mb, kb, byte)
 
 
-    def isConstant(self, value):
+    @staticmethod
+    def isConstant(value):
         """
+        >>> Glove.isConstant(1)
+        True
+        >>> Glove.isConstant(1.)
+        True
+        >>> Glove.isConstant('1')
+        True
+        >>> Glove.isConstant(u'1')
+        True
 
         :param value:
         :return:
@@ -208,7 +229,7 @@ class Glove(object):
             size += self._getSizeOfAny(v)
 
         if obj:
-            self.collectObj(obj, sys.getsizeof(dict) + size)
+            self.collectObj(obj, sys.getsizeof({}) + size)
             return 0
         else:
             return size
@@ -242,7 +263,6 @@ class Glove(object):
         """
         # count size of obj.
         self._addTotalSize(sys.getsizeof(self.orginObj))
-
         self.getSizeOfObj(self.orginObj)
 
 
@@ -270,10 +290,17 @@ class Glove(object):
 
     def sortofdict(self):
         """
-
+        oringiObj is a list.
         :return:
         """
-        # TODO sortofdict
+
+        size = self.getSizeOfList(self.orginObj)
+
+        # size of dict itself.
+        size += sys.getsizeof({})
+
+        self._addTotalSize(size)
+
 
 
 if __name__ == "__main__":
