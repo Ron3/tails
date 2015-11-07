@@ -46,9 +46,24 @@ class GloveTest(unittest.TestCase):
                     u'unicode编码': None,
                 }
 
+            @property
+            def propertyName(self):
+                return 'propertyname'
+
 
         class B(): pass
 
         glove = Glove(A())
         print glove.size
+
+
+    def test_property(self):
+        """
+
+        :return:
+        """
+        class C():pass
+        def foo():pass
+        print
+        print type(C()) == type
 

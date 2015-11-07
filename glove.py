@@ -42,6 +42,8 @@ class Glove(object):
         72
         >>> Glove(None).size
         72
+        >>> Glove(set()).size
+        72
 
         :return:
         """
@@ -50,6 +52,9 @@ class Glove(object):
         elif self.isConstant(self.orginObj):
             # const
             self.sortofconst()
+        elif isinstance(self.orginObj, set):
+            # list
+            self.sortofset()
         elif isinstance(self.orginObj, list):
             # list
             self.sortoflist()
@@ -257,6 +262,9 @@ class Glove(object):
         # add obj to collector to avoid count repeatedly.
         self.collectObj(obj, size)
 
+        if not hasattr(obj, '__dict__'):
+            return size
+
         for k,v in obj.__dict__.iteritems():
             size += self._getSizeOfAny(k, obj)
             size += self._getSizeOfAny(v, obj)
@@ -314,10 +322,30 @@ class Glove(object):
 
     def sortofnone(self):
         """
-
         :return:
         """
         self._addTotalSize(sys.getsizeof(None))
+
+
+    def sortofset(self):
+        """
+        :return:
+        """
+        size = self.getSizeOfSet(self.orginObj)
+
+        # size of list itself.
+        size += sys.getsizeof([])
+
+        self._addTotalSize(size)
+
+
+    def getSizeOfSet(self, value):
+        """
+        :param value:
+        :return:
+        """
+
+
 
 
 if __name__ == "__main__":
