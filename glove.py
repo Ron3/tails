@@ -41,19 +41,20 @@ class Glove(object):
         >>> Glove(A()).size
         72
         >>> Glove(None).size
-        72
+        16
         >>> Glove(set()).size
-        72
+        232
 
         :return:
         """
+
         if self.orginObj is None:
             self.sortofnone()
         elif self.isConstant(self.orginObj):
             # const
             self.sortofconst()
         elif isinstance(self.orginObj, set):
-            # list
+            # set
             self.sortofset()
         elif isinstance(self.orginObj, list):
             # list
@@ -193,6 +194,8 @@ class Glove(object):
             size += sys.getsizeof(value)
         elif isinstance(value, list):
             size += self.getSizeOfList(value, obj)
+        elif isinstance(value, set):
+            size += self.getSizeOfSet(value, obj)
         elif isinstance(value, dict):
             size += self.getSizeOfDict(value, obj)
         else:
@@ -222,7 +225,7 @@ class Glove(object):
             size += self._getSizeOfAny(e)
 
         if obj:
-            self.collectObj(obj, sys.getsizeof(list) + size)
+            self.collectObj(obj, sys.getsizeof([]) + size)
             return 0
         else:
             return size
@@ -334,17 +337,31 @@ class Glove(object):
         size = self.getSizeOfSet(self.orginObj)
 
         # size of list itself.
-        size += sys.getsizeof([])
+        size += sys.getsizeof(set())
 
         self._addTotalSize(size)
 
 
-    def getSizeOfSet(self, value):
+    def getSizeOfSet(self, value, obj=None):
         """
+
+        >>> import sys
+        >>> sys.getsizeof(set())
+        232
+
         :param value:
         :return:
         """
+        # size of instance set itself, exclude data.
+        size = 0
+        for e in value:
+            size += self._getSizeOfAny(e)
 
+        if obj:
+            self.collectObj(obj, sys.getsizeof(set()) + size)
+            return 0
+        else:
+            return size
 
 
 

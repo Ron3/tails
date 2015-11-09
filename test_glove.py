@@ -42,7 +42,7 @@ class GloveTest(unittest.TestCase):
                 self.dic = {
                     132323423412312311: 'utf8编码',
                     '232': self.b2,
-                    self.b2: self.b2,
+                    self.b2: set([1,2]),
                     u'unicode编码': None,
                 }
 
@@ -66,4 +66,5 @@ class GloveTest(unittest.TestCase):
         def foo():pass
         print
         print type(C()) == type
+
 
