@@ -149,10 +149,10 @@ class Glove(object):
         """
         # kb = mb = gb = tb = 0
 
-        TB = 1024 * 1024 * 1024 * 1024 * 8  # byte
-        GB = 1024 * 1024 * 1024 * 8         # byte
-        MB = 1024 * 1024 * 8                # byte
-        KB = 1024 * 8                       # byte
+        TB = 1024 * 1024 * 1024 * 1024   # byte
+        GB = 1024 * 1024 * 1024          # byte
+        MB = 1024 * 1024                 # byte
+        KB = 1024                        # byte
 
         tb = size / TB
         rest = size % TB
