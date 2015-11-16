@@ -3,6 +3,7 @@
 __author__ = 'lamter'
 
 import sys
+import collections
 import logging
 
 
@@ -22,7 +23,7 @@ class Glove(object):
 
         self.size = 0           # byte
 
-        self.report = 0         # report meansure result
+        self.report = []         # report meansure result
 
         # sort of constant and obj
         self.sort()
@@ -57,12 +58,9 @@ class Glove(object):
         elif isinstance(self.orginObj, set):
             # set
             self.sortofset()
-        elif isinstance(self.orginObj, list):
+        elif isinstance(self.orginObj, (list, tuple, collections.deque)):
             # list
             self.sortoflist()
-        elif isinstance(self.orginObj, tuple):
-            # list
-            self.sortoftuple()
         elif isinstance(self.orginObj, dict):
             # dict
             self.sortofdict()
@@ -128,10 +126,13 @@ class Glove(object):
         report
         :return:
         """
-        self.report = 'total constant size of obj: %s' % self.convert(self.size)
-        self.report += '\nall objs size : %s' % self.convert(self.getAllObjsSize())
-        self.report += '\nobjs num : %s' % len(self.objs)
-        self.report += '\ntop size 10 obj : %s' % self.getTopSizeObj(10)
+
+        self.report.append('constant size of obj: %s' % self.convert(self.size))
+        self.report.append('all objs size : %s' % self.convert(self.getAllObjsSize()))
+        self.report.append('objs num : %s' % len(self.objs))
+        self.report.append('top size 10 obj : ')
+        for obj, size in self.getTopSizeObj(10):
+            self.report.append('  %s:%s' % (obj, self.convert(size)))
 
 
     @staticmethod
@@ -185,7 +186,7 @@ class Glove(object):
         :param value:
         :return:
         """
-        return isinstance(value, (type(1), type(1.), basestring, bytearray))
+        return isinstance(value, (type(1), type(1.), basestring, bytearray, long))
 
 
     # def getSizeOfConstant(self, value):
@@ -210,10 +211,8 @@ class Glove(object):
         elif self.isConstant(value):
             # 常量
             size += sys.getsizeof(value)
-        elif isinstance(value, list):
+        elif isinstance(value, (list, tuple, collections.deque)):
             size += self.getSizeOfList(value, obj)
-        elif isinstance(value, tuple):
-            size += self.getSizeOfTuple(value, obj)
         elif isinstance(value, set):
             size += self.getSizeOfSet(value, obj)
         elif isinstance(value, dict):
@@ -245,26 +244,7 @@ class Glove(object):
             size += self._getSizeOfAny(e)
 
         if obj:
-            self.collectObj(obj, sys.getsizeof([]) + size)
-            return 0
-        else:
-            return size
-
-    def getSizeOfTuple(self, value, obj=None):
-        """
-        get size of a tuple, recusively.
-        :param value:
-        :param obj:
-        :return:
-        """
-        # size of instance list itself, exclude data.
-
-        size = 0
-        for e in value:
-            size += self._getSizeOfAny(e)
-
-        if obj:
-            self.collectObj(obj, sys.getsizeof(()) + size)
+            self.collectObj(obj, sys.getsizeof(type(value)()) + size)
             return 0
         else:
             return size
@@ -424,7 +404,7 @@ class Glove(object):
         :return:
         """
         items = self.objs.items()
-        items.sort(key=lambda a:a[1])
+        items.sort(key=lambda a:a[1], reverse=True)
         return items[:num]
 
 if __name__ == "__main__":

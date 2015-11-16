@@ -4,6 +4,7 @@ __author__ = 'lamter'
 
 import sys
 import logging
+logging.basicConfig(level=logging.DEBUG)
 import unittest
 from glove import Glove
 
@@ -34,6 +35,7 @@ class GloveTest(unittest.TestCase):
         """
         :return:
         """
+
         class A():
             def __init__(self):
                 self.b1 = B()
@@ -44,14 +46,21 @@ class GloveTest(unittest.TestCase):
                     '232': self.b2,
                     self.b2: set([1,2]),
                     u'unicode编码': None,
+                    123: (11,1,111),
+                    11: (11,1,111),
                 }
 
-            @property
-            def propertyName(self):
-                return 'propertyname'
+        class B():
+            def __init__(self):
+                self.none = None
+                self.str = '1111'
+                self.int = 15151515151515155151
+                self.float = 11231231231212342323.
+                self.list = [1,2,3,4]
+                self.dict = {1:2, 2:3}
+                self.tuple = (1,2,3, 4)
 
-
-        class B(): pass
+                return
 
         glove = Glove(A())
         glove.meaure()
@@ -90,5 +99,16 @@ class GloveTest(unittest.TestCase):
         glove.meaure()
         print glove.report
 
+    def test_collections(self):
+        """
 
+        :return:
+        """
+        import collections
+        d = collections.deque('123456789')
+        for i in d:
+            print i
+
+        d1 = type(d)('abcdefg')
+        print 15151, isinstance(d1, collections.deque)
 
