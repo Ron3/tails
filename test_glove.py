@@ -54,7 +54,8 @@ class GloveTest(unittest.TestCase):
         class B(): pass
 
         glove = Glove(A())
-        print glove.size
+        glove.meaure()
+        print glove.report
 
 
     def test_property(self):
@@ -66,5 +67,28 @@ class GloveTest(unittest.TestCase):
         def foo():pass
         print
         print type(C()) == type
+
+
+    def test_measure(self):
+        """
+
+        :return:
+        """
+        class A():
+            pass
+
+        a = A()
+
+        for i in xrange(100):
+            a1 = A()
+            for j in xrange(100):
+                a2 = A()
+                setattr(a1, 'a%s' % j, a2)
+            setattr(a, 'a%s' % i, a1)
+
+        glove = Glove(a)
+        glove.meaure()
+        print glove.report
+
 
 
